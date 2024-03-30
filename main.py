@@ -12,29 +12,47 @@ logging.basicConfig(level=logging.INFO)
 # Initialize bot and dispatcher
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
-#
-# prints(jsonm['data'][2]['attributes']['image'])
-# prints(jsonm['data'][7]['attributes']['image'])
-# prints(jsonm['data'][8]['attributes']['image'])
-# prints(jsonm['data'][9]['attributes']['image'])
+
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
     """
     This handler will be called when user sends `/start` or `/help` command
     """
-    await message.reply("Hi!\nI'm EchoBot!\nPowered by aiogram.")
+    await message.reply("Assalamu alaikum")
 
 
+@dp.message_handler(commands=['search'])
+async def echo(message: types.Message):
+    topics = ['* Eating pizza # - 1 ', '* Yummy pictures # - 2 ', '* Services # - 3 ', '* Funny ones # - 4']
+    all_el = ''
+    for o in topics:
+        all_el = all_el + o + '\n'
+    await message.reply(all_el)
 
 @dp.message_handler()
 async def echo(message: types.Message):
-    # old style:
-    # await bot.send_message(message.chat.id, message.text)
-    name = [308, 401, 406, 506, 103, 200]
-    url = f"https://status.pizza/{name[4]}"
-    r = requests.get(url)
-    with open('image.png', 'rb') as f:
-        await message.reply_photo(f)
+    if int(message.text) > 4:
+        await message.reply("** Photo by this Id is not found **")
+    else:
+        id_numb = -1
+        word = ' '
+        if message.text == '1':
+            word = '$ Eating pizza '
+            id_numb = 100
+        if message.text == '2':
+            word = '$ Yummy pizza'
+            id_numb = 200
+        if message.text == '3':
+            word = '$ Delivery services'
+            id_numb = 429
+        if message.text == '4':
+            word = '$ Fun of time'
+            id_numb = 403
+        url = f"https://status.pizza/{id_numb}"
+        r = requests.get(url)
+        await message.reply_photo(r.content, caption=word)
+
+
 
 
 if __name__ == '__main__':
